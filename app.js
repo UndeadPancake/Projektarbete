@@ -40,7 +40,15 @@ function loadOverwrite(res) {
     res.write("<html>\n");
     res.write("<body>\n");
     res.write("<form>\n");
-    res.write(" <label for='img'>Movie poster</label><br>\n");
+    res.write(" <label for='img'>Movie poster:</label>\n");
+    res.write(" <input type='file' id='img' name='img'><br>\n");
+    res.write(" <label for='title'>Title:</title>\n");
+    res.write(" <input type='text' id='title' name='title'><br>\n");
+    res.write(" <label for='rating'>Rating:</label>\n");
+    res.write(" <input type='number' id='rating' name='rating' min='1' max='10'><br>\n");
+    res.write(" <label for='review'>Review:</label>\n");
+    res.write(" <textarea id='review' name='review' rows='10' cols='30'></textarea><br><br>\n");
+    res.write(" <input type='submit' value='submit'>\n");
     res.write("</form>\n");
     res.write("</body>\n");
     res.write("</html>\n");
@@ -62,8 +70,15 @@ http.createServer(function (req, res) {
     else {
         fs.readFile(imageFile, function (err, data) {
             res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.write(data);
+            if (data) {
+                res.write(data);
+            }
+            else {
+                var qdata = q.query;
+                fs.writeFileSync('save.txt', qdata.img + '|' + qdata.title + '|' + qdata.rating + '/10|' + qdata.review);
+            }
             res.end();
+            req.url = "/";
         });
     }
 }).listen(8080);
